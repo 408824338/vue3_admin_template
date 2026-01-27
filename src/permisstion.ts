@@ -21,15 +21,16 @@ const userStore = useUserStore(pinia)  //和这里为什么要将pinia传递给u
 
 
 //全局前置守卫
-router.beforeEach(async (to, from, next)=>{
+router.beforeEach(async (to:any, from:any, next:any)=>{
     //访问某一路由之前的守卫
     nprogress.start()
 
     //获取token，去判断用户登录、还是未登录
     const token = userStore.token
+
     //获取用户名字
     let username = userStore.username
-
+    // console.log('username',username)
     //用户登录判断
     if(token){
         //登录成功,访问login,指向首页
@@ -45,7 +46,8 @@ router.beforeEach(async (to, from, next)=>{
                 //如果没有用户信息，在收尾这里发请求获取到了用户信息再放行
                 try{
                    //获取用户信息
-                    await userStore.userInfo()
+                    const res = await userStore.userInfo()
+                    console.log('bbbbbbbb',res)
                     next()
                 }catch (err){
                     //token过期|用户手动处理token
@@ -72,7 +74,7 @@ router.beforeEach(async (to, from, next)=>{
 
 //全局后置守卫
 
-router.afterEach((to, from)=>{
+router.afterEach((to:any, from:any)=>{
     nprogress.done()
 })
 

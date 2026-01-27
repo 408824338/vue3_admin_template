@@ -7,8 +7,9 @@ import type {loginForm,loginResponse,userResponseData} from './types.ts'
 
 // @ts-ignore
 enum API {
-    LOGIN_URL ='/user/login',
-    USERINFO_URL = '/user/info'
+    LOGIN_URL = '/admin/acl/index/login',
+    USERINFO_URL = '/admin/acl/index/info',
+    LOGOUT_URL = '/admin/acl/index/logout',
 }
 
 //暴露请示函数
@@ -18,3 +19,7 @@ export const reqLogin = (data:loginForm)=>request.post<any,loginResponse>(API.LO
 //获取用户信息接口方法
 export const reqUserInfo = ()=>request.get<any,userResponseData>(API.USERINFO_URL)
 
+//退出登录
+export const reqLogout = () => {
+    return request.post<any, any>(API.LOGOUT_URL)
+}

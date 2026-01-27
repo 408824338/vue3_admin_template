@@ -71,7 +71,9 @@ const login = async ()=>{
 
   isLoading.value = true
   try {
-    await useStore.userLogin(loginForm)
+    let res = await useStore.userLogin(loginForm)
+
+    console.log('res',res)
 
     //登录成功，跳转到首页
     // $router.push('/')
