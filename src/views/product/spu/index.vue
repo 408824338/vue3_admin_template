@@ -8,11 +8,11 @@ import SpuForm from './spuForm.vue'
 import {ref, watch} from "vue";
 
 //定义card组件内容切换变量
-let scene = ref<number>(1) //scene=0,显示table,scene=1,展示添加与修改属性结构
+let scene = ref<number>(0) //scene=0,显示table,scene=1,展示添加与修改属性结构
 
 import userCategoryStore from "@/store/modules/category.ts";
 import {reqHasSpu} from "@/api/product/spu";
-import type {HasSpuResponseData} from "@/api/product/spu/type.ts";
+import type {HasSpuResponseData, SpuData} from "@/api/product/spu/type.ts";
 
 let categoryStore = userCategoryStore()
 
@@ -61,9 +61,11 @@ const addSpu = ()=>{
 }
 
 //修改已有的SPU的按钮的回调
-const updateSpu = () => {
+const updateSpu = (row:SpuData) => {
   //切换为场景1:添加与修改已有SPU结构->SpuForm
-  scene.value = 1
+  scene.value =1
+  //调用子组件实例方法获取完整已有的SPU的数据
+  spu.value.initHasSpuData(row)
 }
 
 //子组件SpuForm绑定自定义事件:目前是让子组件通知父组件切换场景为0
@@ -72,6 +74,9 @@ const changeScene = (obj:any)=>{
   scene.value = obj
 
 }
+
+//获取子组件实例spuForm
+let spu = ref<any>()
 
 </script>
 
@@ -95,8 +100,8 @@ const changeScene = (obj:any)=>{
         <el-table-column label="SPU操作">
           <!-- row:即为已有的SPU对象 -->
           <template #="{row,index}">
-            <el-button type="primary" size="small" icon="Plus" title="添加SKU"></el-button>
-            <el-button type="primary" size="small" icon="Edit" title="修改SKU"></el-button>
+            <el-button type="primary" size="small" icon="Plus" title="添加SKU" ></el-button>
+            <el-button type="primary" size="small" icon="Edit" title="修改SKU" @click="updateSpu(row)"></el-button>
             <el-button type="primary" size="small" icon="View" title="查看SKU列表"></el-button>
             <el-popconfirm :title="`你确定删除${row.spuName}?`" width="200px">
               <template #reference>
@@ -123,8 +128,13 @@ const changeScene = (obj:any)=>{
 
   </div>
 
-  <SpuForm v-show="scene == 1" @changeScene="changeScene"></SpuForm>
-  <SpuForm v-show="scene == 3"></SpuForm>
+  <!-- 添加SPU|修改SPU子组件 -->
+  <SpuForm
+      ref="spu"
+      v-show="scene == 1" @changeScene="changeScene"></SpuForm>
+
+  <!-- 添加SKU的子组件 -->
+  <SkuForm v-show="scene == 3" ></SkuForm>
 
 </template>
 
